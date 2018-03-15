@@ -1,6 +1,8 @@
 package com.example.itamarborges.baking.adapter;
 
 import android.content.Context;
+import android.content.Intent;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -8,6 +10,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.example.itamarborges.baking.R;
+import com.example.itamarborges.baking.RecipeMasterActivity;
 import com.example.itamarborges.baking.pojo.Recipe;
 
 import java.util.List;
@@ -46,7 +49,7 @@ public class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.RecipeHold
         boolean shouldAttachToParentImmediately = false;
 
         View view = inflater.inflate(layoutIdForListItem, viewGroup, shouldAttachToParentImmediately);
-        RecipeHolder viewHolder = new RecipeHolder(view);
+        RecipeHolder viewHolder = new RecipeHolder(view, context);
 
         return viewHolder;
     }
@@ -64,21 +67,37 @@ public class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.RecipeHold
 
     class RecipeHolder extends RecyclerView.ViewHolder {
 
+        Context mContext;
+
         @BindView(R.id.recipe_name)
         TextView mRecipeName;
 
         @BindView(R.id.recipe_servings)
         TextView mRecipeServings;
 
-        void bind(Recipe recipe) {
+        @BindView(R.id.cv_recipe)
+        CardView mCvRecipe;
+
+        void bind(final Recipe recipe) {
             mRecipeName.setText(recipe.getName());
             mRecipeServings.setText("Serving: ".concat(String.valueOf(recipe.getServings())));
 
+            mCvRecipe.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Intent intent = new Intent(mContext, RecipeMasterActivity.class);
+                    intent.putExtra(RecipeMasterActivity.INTENT_KEY_ID, recipe.getId());
+
+                    mContext.startActivity(intent);
+                }
+            });
+
         }
 
-        public RecipeHolder(View itemView) {
+        public RecipeHolder(View itemView, Context context) {
             super(itemView);
             ButterKnife.bind(this, itemView);
+            mContext = context;
         }
     }
 }

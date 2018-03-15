@@ -14,7 +14,6 @@ import com.example.itamarborges.baking.pojo.Recipe;
 import com.example.itamarborges.baking.utils.JsonUtils;
 import com.example.itamarborges.baking.utils.Utils;
 
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -72,7 +71,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
                 try {
                     jSonRecipes = JsonUtils.loadJSONFromAsset(getContext());
 
-                    mRecipes = RecipeModel.loadAllRecipes(jSonRecipes);
+                    mRecipes = RecipeModel.getAllRecipes(jSonRecipes);
 
                 } catch (Exception e) {
                     e.printStackTrace();
