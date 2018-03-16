@@ -1,13 +1,17 @@
 package com.example.itamarborges.baking.adapter;
 
 import android.content.Context;
+import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.example.itamarborges.baking.R;
+import com.example.itamarborges.baking.RecipeDetailActivity;
+import com.example.itamarborges.baking.pojo.Recipe;
 import com.example.itamarborges.baking.pojo.Step;
 
 import java.util.List;
@@ -33,9 +37,13 @@ public class StepAdapter extends RecyclerView.Adapter<StepAdapter.StepHolder> {
     }
 
     private List<Step> mSteps;
+    private String mRecipeName;
+    private int mRecipeId;
 
-    public StepAdapter(List<Step> steps) {
-        mSteps = steps;
+    public StepAdapter(Recipe recipe) {
+        mSteps = recipe.getSteps();
+        mRecipeName = recipe.getName();
+        mRecipeId = recipe.getId();
     }
 
     @Override
@@ -67,10 +75,28 @@ public class StepAdapter extends RecyclerView.Adapter<StepAdapter.StepHolder> {
         Context mContext;
 
         @BindView(R.id.step)
-        TextView mStep;
+        TextView mTextViewStep;
+
+        @BindView(R.id.step_layout)
+        LinearLayout mLayout;
+
 
         void bind(final Step step) {
-            mStep.setText(String.valueOf(step.getId()+1).concat(". ").concat(step.getShortDescription()));
+            mTextViewStep.setText(String.valueOf(step.getId()+1).concat(". ").concat(step.getShortDescription()));
+
+
+            mLayout.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Intent intent = new Intent(mContext, RecipeDetailActivity.class);
+                    intent.putExtra(RecipeDetailActivity.INTENT_KEY_ID, step.getId());
+                    intent.putExtra(RecipeDetailActivity.INTENT_KEY_RECIPE_NAME, mRecipeName);
+                    intent.putExtra(RecipeDetailActivity.INTENT_KEY_RECIPE_ID, mRecipeId);
+
+                    mContext.startActivity(intent);
+                }
+            });
+
         }
 
         public StepHolder(View itemView, Context context) {

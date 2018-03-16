@@ -18,6 +18,8 @@
         </activity>
         <activity android:name=".RecipeMasterActivity">
         </activity>
+        <activity android:name=".RecipeDetailActivity">
+        </activity>
     </application>
 
 </manifest>

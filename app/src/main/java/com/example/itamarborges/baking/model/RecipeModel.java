@@ -100,4 +100,17 @@ public class RecipeModel {
         }
         return null;
     }
+
+    public static Step getStep(int idRecipe, int idStep) {
+        Recipe mRecipe = getRecipe(idRecipe);
+
+        if (mRecipe != null) {
+            for (Step s: mRecipe.getSteps()) {
+                if (s.getId() == idStep) {
+                    return s;
+                }
+            }
+        }
+        return null;
+    }
 }

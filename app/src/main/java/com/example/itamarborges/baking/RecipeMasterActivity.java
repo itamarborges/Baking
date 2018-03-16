@@ -56,7 +56,7 @@ public class RecipeMasterActivity extends AppCompatActivity {
         mRecyclerIngredients.setLayoutManager(layoutManagerIngredients);
 
         LinearLayoutManager layoutManagerStep = new LinearLayoutManager(this);
-        mStepAdapter = new StepAdapter(mRecipe.getSteps());
+        mStepAdapter = new StepAdapter(mRecipe);
         mRecyclerSteps.setAdapter(mStepAdapter);
         mRecyclerSteps.setHasFixedSize(false);
         mRecyclerSteps.setNestedScrollingEnabled(false);
