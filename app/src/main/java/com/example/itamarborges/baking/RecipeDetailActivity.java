@@ -3,12 +3,17 @@ package com.example.itamarborges.baking;
 import android.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
+import android.widget.Toast;
 
 import com.example.itamarborges.baking.model.RecipeModel;
+import com.example.itamarborges.baking.pojo.Recipe;
 import com.example.itamarborges.baking.pojo.Step;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 
 public class RecipeDetailActivity extends AppCompatActivity {
 
@@ -25,8 +30,19 @@ public class RecipeDetailActivity extends AppCompatActivity {
     private int idRecipe = -1;
 
     private Step currentStep;
+    private Recipe currentRecipe;
 
     StepFullDescriptionFragment stepFragment;
+
+    @BindView(R.id.btn_previous)
+    Button btnPrevious;
+
+    @BindView(R.id.btn_stop)
+    Button btnStop;
+
+    @BindView(R.id.btn_next)
+    Button btnNex;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,9 +58,47 @@ public class RecipeDetailActivity extends AppCompatActivity {
 
         setTitle(recipeName);
 
+        currentRecipe = RecipeModel.getRecipe(idRecipe);
+        setCurrentStep();
+    }
+
+    private void nextStep() {
+        idStep++;
+        setCurrentStep();
+    }
+
+    private void previousStep() {
+        idStep--;
+        setCurrentStep();
+    }
+
+    private void setCurrentStep() {
         currentStep = RecipeModel.getStep(idRecipe, idStep);
         stepFragment = (StepFullDescriptionFragment) getSupportFragmentManager().findFragmentById(R.id.step_fragment);
         stepFragment.setStep(currentStep);
+
+        showButtons();
+    }
+
+    @OnClick(R.id.btn_previous)
+    public void previousStep(View view) {
+        previousStep();
+    }
+
+    @OnClick(R.id.btn_stop)
+    public void stopStep(View view) {
+        finish();
+    }
+
+    @OnClick(R.id.btn_next)
+    public void nextStep(View view) {
+        nextStep();
+    }
+
+
+    private void showButtons() {
+        btnPrevious.setVisibility((idStep < 1) ? View.INVISIBLE : View.VISIBLE);
+        btnNex.setVisibility(idStep + 1 == currentRecipe.getSteps().size() ? View.INVISIBLE : View.VISIBLE);
     }
 
 
@@ -68,5 +122,7 @@ public class RecipeDetailActivity extends AppCompatActivity {
         if (savedInstanceState.containsKey(RECIPE_NAME)) {
             recipeName = savedInstanceState.getString(RECIPE_NAME);
         }
+
+        setCurrentStep();
     }
 }

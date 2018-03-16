@@ -24,6 +24,9 @@ public class StepFullDescriptionFragment extends Fragment {
     @BindView(R.id.step_description)
     TextView stepDescription;
 
+    @BindView(R.id.step_short_description)
+    TextView stepShortDescription;
+
     public StepFullDescriptionFragment() {
         // Required empty public constructor
     }
@@ -78,6 +81,9 @@ public class StepFullDescriptionFragment extends Fragment {
     }
 
     private void fillInformation() {
+
+        stepShortDescription.setText(mStep.getShortDescription());
         stepDescription.setText(mStep.getDescription());
+
     }
 }
