@@ -1,10 +1,12 @@
 package com.example.itamarborges.baking;
 
 import android.os.PersistableBundle;
+import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.widget.FrameLayout;
 
 import com.example.itamarborges.baking.adapter.IngredientAdapter;
 import com.example.itamarborges.baking.adapter.StepAdapter;
@@ -32,6 +34,12 @@ public class RecipeMasterActivity extends AppCompatActivity {
     @BindView(R.id.rv_steps_short)
     RecyclerView mRecyclerSteps;
 
+    @Nullable
+    @BindView(R.id.frame_video)
+    FrameLayout mFrameLayout;
+
+    private boolean mTwoPane;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,6 +55,8 @@ public class RecipeMasterActivity extends AppCompatActivity {
 
         setTitle(mRecipe.getName());
 
+        mTwoPane = (mFrameLayout != null);
+
         LinearLayoutManager layoutManagerIngredients = new LinearLayoutManager(this);
         mIngredientAdapter = new IngredientAdapter(mRecipe.getIngredients());
         mRecyclerIngredients.setAdapter(mIngredientAdapter);
@@ -57,6 +67,7 @@ public class RecipeMasterActivity extends AppCompatActivity {
 
         LinearLayoutManager layoutManagerStep = new LinearLayoutManager(this);
         mStepAdapter = new StepAdapter(mRecipe);
+        mStepAdapter.setTwoPane(mTwoPane);
         mRecyclerSteps.setAdapter(mStepAdapter);
         mRecyclerSteps.setHasFixedSize(false);
         mRecyclerSteps.setNestedScrollingEnabled(false);

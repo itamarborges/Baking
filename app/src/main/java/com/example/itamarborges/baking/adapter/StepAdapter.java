@@ -2,6 +2,8 @@ package com.example.itamarborges.baking.adapter;
 
 import android.content.Context;
 import android.content.Intent;
+import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,6 +13,8 @@ import android.widget.TextView;
 
 import com.example.itamarborges.baking.R;
 import com.example.itamarborges.baking.RecipeDetailActivity;
+import com.example.itamarborges.baking.StepFullDescriptionFragment;
+import com.example.itamarborges.baking.model.RecipeModel;
 import com.example.itamarborges.baking.pojo.Recipe;
 import com.example.itamarborges.baking.pojo.Step;
 
@@ -39,6 +43,19 @@ public class StepAdapter extends RecyclerView.Adapter<StepAdapter.StepHolder> {
     private List<Step> mSteps;
     private String mRecipeName;
     private int mRecipeId;
+    private Step currentStep;
+    StepFullDescriptionFragment stepFragment;
+    private FragmentManager fm;
+
+    private boolean mTwoPane;
+
+    public boolean isTwoPane() {
+        return mTwoPane;
+    }
+
+    public void setTwoPane(boolean mTwoPane) {
+        this.mTwoPane = mTwoPane;
+    }
 
     public StepAdapter(Recipe recipe) {
         mSteps = recipe.getSteps();
@@ -55,6 +72,8 @@ public class StepAdapter extends RecyclerView.Adapter<StepAdapter.StepHolder> {
 
         View view = inflater.inflate(layoutIdForListItem, viewGroup, shouldAttachToParentImmediately);
         StepHolder viewHolder = new StepHolder(view, context);
+
+        fm = ((FragmentActivity)context).getSupportFragmentManager();
 
         return viewHolder;
     }
@@ -88,12 +107,19 @@ public class StepAdapter extends RecyclerView.Adapter<StepAdapter.StepHolder> {
             mLayout.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    Intent intent = new Intent(mContext, RecipeDetailActivity.class);
-                    intent.putExtra(RecipeDetailActivity.INTENT_KEY_ID, step.getId());
-                    intent.putExtra(RecipeDetailActivity.INTENT_KEY_RECIPE_NAME, mRecipeName);
-                    intent.putExtra(RecipeDetailActivity.INTENT_KEY_RECIPE_ID, mRecipeId);
+                    if (!mTwoPane) {
+                        Intent intent = new Intent(mContext, RecipeDetailActivity.class);
+                        intent.putExtra(RecipeDetailActivity.INTENT_KEY_ID, step.getId());
+                        intent.putExtra(RecipeDetailActivity.INTENT_KEY_RECIPE_NAME, mRecipeName);
+                        intent.putExtra(RecipeDetailActivity.INTENT_KEY_RECIPE_ID, mRecipeId);
 
-                    mContext.startActivity(intent);
+                        mContext.startActivity(intent);
+                    } else {
+                        currentStep = RecipeModel.getStep(mRecipeId, step.getId());
+                        stepFragment = (StepFullDescriptionFragment) fm.findFragmentById(R.id.step_fragment);
+                        stepFragment.setStep(currentStep);
+                    }
+
                 }
             });
 
