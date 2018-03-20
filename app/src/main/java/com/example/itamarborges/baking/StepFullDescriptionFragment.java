@@ -4,6 +4,8 @@ import android.content.Context;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,6 +13,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.example.itamarborges.baking.pojo.Step;
+import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.DefaultLoadControl;
 import com.google.android.exoplayer2.ExoPlayerFactory;
 import com.google.android.exoplayer2.LoadControl;
@@ -31,9 +34,12 @@ import butterknife.ButterKnife;
 
 public class StepFullDescriptionFragment extends Fragment {
 
+    private static final String POSITION = "position";
+
     private Step mStep;
 
     private OnFragmentInteractionListener mListener;
+    private long position = C.TIME_UNSET;
 
     @BindView(R.id.step_description)
     TextView stepDescription;
@@ -51,8 +57,9 @@ public class StepFullDescriptionFragment extends Fragment {
     }
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putLong(POSITION, mExoPlayer.getCurrentPosition());
     }
 
     @Override
@@ -67,8 +74,17 @@ public class StepFullDescriptionFragment extends Fragment {
     }
 
 
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        if (savedInstanceState != null) {
+            position = savedInstanceState.getLong(POSITION, C.TIME_UNSET);
+        }
+    }
+
     /**
      * Initialize ExoPlayer.
+     *
      * @param mediaUri The URI of the sample to play.
      */
     private void initializePlayer(Uri mediaUri) {
@@ -80,12 +96,15 @@ public class StepFullDescriptionFragment extends Fragment {
             mPlayerView.setPlayer(mExoPlayer);
             // Prepare the MediaSource.
         }
-            String userAgent = Util.getUserAgent(getContext(), "Baking");
-            MediaSource mediaSource = new ExtractorMediaSource(mediaUri,
-                    new DefaultHttpDataSourceFactory(userAgent),
-                    new DefaultExtractorsFactory(), null, null);
-            mExoPlayer.prepare(mediaSource);
-            mExoPlayer.setPlayWhenReady(true);
+        String userAgent = Util.getUserAgent(getContext(), "Baking");
+        MediaSource mediaSource = new ExtractorMediaSource(mediaUri,
+                new DefaultHttpDataSourceFactory(userAgent),
+                new DefaultExtractorsFactory(), null, null);
+        mExoPlayer.prepare(mediaSource);
+        mExoPlayer.setPlayWhenReady(true);
+        if (position != C.TIME_UNSET) {
+            mExoPlayer.seekTo(position);
+        }
 
     }
 
@@ -110,21 +129,9 @@ public class StepFullDescriptionFragment extends Fragment {
         fillInformation();
     }
 
-    public void onButtonPressed(Uri uri) {
-        if (mListener != null) {
-            mListener.onFragmentInteraction(uri);
-        }
-    }
-
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-//        if (context instanceof OnFragmentInteractionListener) {
-//            mListener = (OnFragmentInteractionListener) context;
-//        } else {
-//            throw new RuntimeException(context.toString()
-//                    + " must implement OnFragmentInteractionListener");
-//        }
     }
 
     @Override
