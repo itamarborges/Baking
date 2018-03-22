@@ -1,5 +1,7 @@
 package com.example.itamarborges.baking.pojo;
 
+import java.io.Serializable;
+
 /**
  * Created by itamarborges on 12/03/18.
  */
@@ -39,6 +41,5 @@ public class Ingredient {
         this.measure = measure;
         this.ingredient = ingredient;
     }
-
 
 }

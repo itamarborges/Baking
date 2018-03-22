@@ -1,5 +1,7 @@
 package com.example.itamarborges.baking.adapter;
 
+import android.appwidget.AppWidgetManager;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.support.v7.widget.CardView;
@@ -9,8 +11,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.example.itamarborges.baking.BakingAppWidget;
 import com.example.itamarborges.baking.R;
 import com.example.itamarborges.baking.RecipeMasterActivity;
+import com.example.itamarborges.baking.pojo.Ingredient;
 import com.example.itamarborges.baking.pojo.Recipe;
 
 import java.util.List;
@@ -85,12 +89,21 @@ public class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.RecipeHold
             mCvRecipe.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
+
+                    AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(mContext);
+                    int[] appWidgetIds = appWidgetManager.getAppWidgetIds(new ComponentName(mContext, BakingAppWidget.class));
+                    BakingAppWidget.updateFromActivity(mContext, appWidgetManager, appWidgetIds, recipe);
+
+
                     Intent intent = new Intent(mContext, RecipeMasterActivity.class);
                     intent.putExtra(RecipeMasterActivity.INTENT_KEY_ID, recipe.getId());
 
                     mContext.startActivity(intent);
                 }
             });
+
+
+
 
         }
 
