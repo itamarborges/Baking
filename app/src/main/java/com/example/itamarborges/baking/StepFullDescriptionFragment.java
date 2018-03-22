@@ -39,6 +39,15 @@ public class StepFullDescriptionFragment extends Fragment {
     private Step mStep;
 
     private OnFragmentInteractionListener mListener;
+
+    public long getPosition() {
+        return position;
+    }
+
+    public void setPosition(long position) {
+        this.position = position;
+    }
+
     private long position = C.TIME_UNSET;
 
     @BindView(R.id.step_description)
@@ -59,7 +68,10 @@ public class StepFullDescriptionFragment extends Fragment {
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putLong(POSITION, mExoPlayer.getCurrentPosition());
+        if (mExoPlayer != null) {
+            outState.putLong(POSITION, mExoPlayer.getCurrentPosition());
+        }
+
     }
 
     @Override

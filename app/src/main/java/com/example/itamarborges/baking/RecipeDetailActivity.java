@@ -10,6 +10,7 @@ import android.widget.Toast;
 import com.example.itamarborges.baking.model.RecipeModel;
 import com.example.itamarborges.baking.pojo.Recipe;
 import com.example.itamarborges.baking.pojo.Step;
+import com.google.android.exoplayer2.C;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -59,22 +60,25 @@ public class RecipeDetailActivity extends AppCompatActivity {
         setTitle(recipeName);
 
         currentRecipe = RecipeModel.getRecipe(idRecipe);
+        stepFragment = (StepFullDescriptionFragment) getSupportFragmentManager().findFragmentById(R.id.step_fragment);
+
         setCurrentStep();
     }
 
     private void nextStep() {
         idStep++;
+        stepFragment.setPosition(C.TIME_UNSET);
         setCurrentStep();
     }
 
     private void previousStep() {
         idStep--;
+        stepFragment.setPosition(C.TIME_UNSET);
         setCurrentStep();
     }
 
     private void setCurrentStep() {
         currentStep = RecipeModel.getStep(idRecipe, idStep);
-        stepFragment = (StepFullDescriptionFragment) getSupportFragmentManager().findFragmentById(R.id.step_fragment);
         stepFragment.setStep(currentStep);
 
         showButtons();
@@ -87,6 +91,8 @@ public class RecipeDetailActivity extends AppCompatActivity {
 
     @OnClick(R.id.btn_stop)
     public void stopStep(View view) {
+
+        stepFragment.setPosition(C.TIME_UNSET);
         finish();
     }
 
