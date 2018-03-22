@@ -1,5 +1,6 @@
 package com.example.itamarborges.baking;
 
+import android.support.annotation.Nullable;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.AsyncTaskLoader;
 import android.support.v4.content.Loader;
@@ -9,6 +10,7 @@ import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 
 import com.example.itamarborges.baking.adapter.RecipeAdapter;
+import com.example.itamarborges.baking.idlingResource.SimpleIdlingResource;
 import com.example.itamarborges.baking.model.RecipeModel;
 import com.example.itamarborges.baking.pojo.Recipe;
 import com.example.itamarborges.baking.utils.JsonUtils;
@@ -20,7 +22,7 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class MainActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Object> {
+public class MainActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Object>, RecipeAdapter.Done {
 
     private static final int RECIPES_LOADER_ID = 0;
 
@@ -29,6 +31,21 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
     private GridLayoutManager mLayoutManager;
     private RecipeAdapter mRecipeAdapter;
+
+    @Nullable
+    public SimpleIdlingResource getIdlingResource() {
+        if (mIdlingResource == null) {
+            mIdlingResource = new SimpleIdlingResource();
+        }
+        return mIdlingResource;
+    }
+
+    public void setIdlingResource(@Nullable SimpleIdlingResource mIdlingResource) {
+        this.mIdlingResource = mIdlingResource;
+    }
+
+    @Nullable
+    private SimpleIdlingResource mIdlingResource;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,8 +56,10 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         mLayoutManager = new GridLayoutManager(this, Utils.numberOfColumns(getWindowManager()));
         mRvRecipes.setLayoutManager(mLayoutManager);
 
-        mRecipeAdapter = new RecipeAdapter(new ArrayList<Recipe>());
+        mRecipeAdapter = new RecipeAdapter(this, new ArrayList<Recipe>());
         mRvRecipes.setAdapter(mRecipeAdapter);
+
+        getIdlingResource();
     }
 
     @Override
@@ -57,6 +76,10 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
             @Override
             protected void onStartLoading() {
+
+                if (mIdlingResource != null) {
+                    mIdlingResource.setIdleState(false);
+                }
                 if (mRecipes != null) {
                     deliverResult(mRecipes);
                 } else {
@@ -96,5 +119,12 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     @Override
     public void onLoaderReset(Loader<Object> loader) {
 
+    }
+
+    @Override
+    public void onDone() {
+        if (mIdlingResource != null) {
+            mIdlingResource.setIdleState(true);
+        }
     }
 }

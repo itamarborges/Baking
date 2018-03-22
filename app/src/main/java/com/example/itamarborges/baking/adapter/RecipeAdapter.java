@@ -37,12 +37,19 @@ public class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.RecipeHold
     public void setRecipes(List<Recipe> mRecipes) {
         this.mRecipes = mRecipes;
         this.notifyDataSetChanged();
+        mDone.onDone();
     }
 
     private List<Recipe> mRecipes;
+    private Done mDone;
 
-    public RecipeAdapter(List<Recipe> recipes) {
+    public RecipeAdapter(Done mActivity, List<Recipe> recipes) {
         mRecipes = recipes;
+        mDone = mActivity;
+    }
+
+    public interface Done {
+        public void onDone();
     }
 
     @Override
