@@ -7,5 +7,7 @@
     <string name="stop_recipe">Stop Recipe</string>
     <string name="add_widget">Add widget</string>
     <string name="you_need_to_select_a_recipe_first">You need to select a recipe first</string>
+    <string name="ops_it_seems_you_don_t_have_internet_connection">Ops...It seems you don\'t have Internet connection</string>
+    <string name="try_again">Try again</string>
 
 </resources>

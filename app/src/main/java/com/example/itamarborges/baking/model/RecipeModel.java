@@ -1,13 +1,19 @@
 package com.example.itamarborges.baking.model;
 
+import android.net.Uri;
+
 import com.example.itamarborges.baking.pojo.Ingredient;
 import com.example.itamarborges.baking.pojo.Recipe;
 import com.example.itamarborges.baking.pojo.Step;
+import com.example.itamarborges.baking.utils.NetworkUtils;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -19,7 +25,7 @@ public class RecipeModel {
 
     private static List<Recipe> mRecipes = new ArrayList<>();
 
-    public static List<Recipe> getAllRecipes(String jsonString) throws JSONException {
+    public static List<Recipe> getAllRecipes() throws JSONException, IOException {
 
         final String RECIPE_ID = "id";
         final String RECIPE_NAME = "name";
@@ -39,6 +45,10 @@ public class RecipeModel {
         final String STEP_THUMBNAIL_URL = "thumbnailURL";
 
         if (mRecipes.size() == 0) {
+
+            Uri builtUri = Uri.parse(NetworkUtils.RECIPES_URL).buildUpon().build();
+            URL url = new URL(builtUri.toString());
+            String jsonString = NetworkUtils.getResponseFromHttpUrl(url);
 
             JSONArray recipesJson = new JSONArray(jsonString);
 
