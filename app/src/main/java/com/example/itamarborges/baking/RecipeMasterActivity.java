@@ -1,5 +1,7 @@
 package com.example.itamarborges.baking;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.PersistableBundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
@@ -48,7 +50,16 @@ public class RecipeMasterActivity extends AppCompatActivity {
         ButterKnife.bind(this);
 
         if (idRecipe == -1) {
-            idRecipe = getIntent().getIntExtra(INTENT_KEY_ID, -1);
+            if (getIntent() != null && getIntent().hasExtra(INTENT_KEY_ID)){
+                idRecipe = getIntent().getIntExtra(INTENT_KEY_ID, -1);
+                SharedPreferences preferences = getSharedPreferences(RecipeMasterActivity.class.getSimpleName(), Context.MODE_PRIVATE);
+                SharedPreferences.Editor editor = preferences.edit();
+                editor.putInt("idRecipe", idRecipe);
+                editor.commit();
+            } else {
+                SharedPreferences preferences = getSharedPreferences(RecipeMasterActivity.class.getSimpleName(), Context.MODE_PRIVATE);
+                idRecipe = preferences.getInt("idRecipe", -1);
+            }
         }
 
         mRecipe = RecipeModel.getRecipe(idRecipe);

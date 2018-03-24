@@ -19,9 +19,9 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".RecipeMasterActivity">
+        <activity android:name=".RecipeMasterActivity" android:parentActivityName="com.example.itamarborges.baking.MainActivity">
         </activity>
-        <activity android:name=".RecipeDetailActivity">
+        <activity android:name=".RecipeDetailActivity" android:parentActivityName="com.example.itamarborges.baking.RecipeMasterActivity">
         </activity>
 
         <receiver android:name=".BakingAppWidget">
