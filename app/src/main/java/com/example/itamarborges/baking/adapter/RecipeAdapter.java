@@ -9,6 +9,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.itamarborges.baking.BakingAppWidget;
@@ -16,6 +17,7 @@ import com.example.itamarborges.baking.R;
 import com.example.itamarborges.baking.RecipeMasterActivity;
 import com.example.itamarborges.baking.pojo.Ingredient;
 import com.example.itamarborges.baking.pojo.Recipe;
+import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
@@ -89,7 +91,21 @@ public class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.RecipeHold
         @BindView(R.id.cv_recipe)
         CardView mCvRecipe;
 
+        @BindView(R.id.img_recipe)
+        ImageView mImage;
+
         void bind(final Recipe recipe) {
+
+            if (recipe.getImage().isEmpty()) {
+                mImage.setImageResource(R.drawable.cooking);
+            } else {
+                Picasso.with(mContext)
+                        .load(recipe.getImage())
+                        .error(R.drawable.cooking)
+                        .placeholder(R.drawable.cooking)
+                        .into(mImage);
+            }
+
             mRecipeName.setText(recipe.getName());
             mRecipeServings.setText("Serving: ".concat(String.valueOf(recipe.getServings())));
 

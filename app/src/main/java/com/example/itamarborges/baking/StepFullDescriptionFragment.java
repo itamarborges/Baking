@@ -10,6 +10,7 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.itamarborges.baking.pojo.Step;
@@ -24,9 +25,9 @@ import com.google.android.exoplayer2.source.MediaSource;
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
 import com.google.android.exoplayer2.trackselection.TrackSelector;
 import com.google.android.exoplayer2.ui.SimpleExoPlayerView;
-import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
 import com.google.android.exoplayer2.upstream.DefaultHttpDataSourceFactory;
 import com.google.android.exoplayer2.util.Util;
+import com.squareup.picasso.Picasso;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -34,7 +35,9 @@ import butterknife.ButterKnife;
 
 public class StepFullDescriptionFragment extends Fragment {
 
-    private static final String POSITION = "position";
+    private static final String POSITION_INDEX = "position";
+    private static final String PLAY_WHEN_READY_INDEX = "playWhenReady";
+
 
     private Step mStep;
 
@@ -59,7 +62,12 @@ public class StepFullDescriptionFragment extends Fragment {
     @BindView(R.id.playerView)
     SimpleExoPlayerView mPlayerView;
 
+    @BindView(R.id.img_thumbnail)
+    ImageView mThumbNail;
+
     private SimpleExoPlayer mExoPlayer;
+
+    boolean mPlayWhenReady = true;
 
     public StepFullDescriptionFragment() {
         // Required empty public constructor
@@ -68,10 +76,8 @@ public class StepFullDescriptionFragment extends Fragment {
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
-        if (mExoPlayer != null) {
-            outState.putLong(POSITION, mExoPlayer.getCurrentPosition());
-        }
-
+        outState.putLong(POSITION_INDEX, position);
+        outState.putBoolean(PLAY_WHEN_READY_INDEX, mPlayWhenReady);
     }
 
     @Override
@@ -90,7 +96,8 @@ public class StepFullDescriptionFragment extends Fragment {
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         if (savedInstanceState != null) {
-            position = savedInstanceState.getLong(POSITION, C.TIME_UNSET);
+            position = savedInstanceState.getLong(POSITION_INDEX, C.TIME_UNSET);
+            mPlayWhenReady = savedInstanceState.getBoolean(PLAY_WHEN_READY_INDEX, true);
         }
     }
 
@@ -113,7 +120,7 @@ public class StepFullDescriptionFragment extends Fragment {
                 new DefaultHttpDataSourceFactory(userAgent),
                 new DefaultExtractorsFactory(), null, null);
         mExoPlayer.prepare(mediaSource);
-        mExoPlayer.setPlayWhenReady(true);
+        mExoPlayer.setPlayWhenReady(mPlayWhenReady);
         if (position != C.TIME_UNSET) {
             mExoPlayer.seekTo(position);
         }
@@ -125,6 +132,8 @@ public class StepFullDescriptionFragment extends Fragment {
      */
     private void releasePlayer() {
         if (mExoPlayer != null) {
+            position = mExoPlayer.getCurrentPosition();
+            mPlayWhenReady = mExoPlayer.getPlayWhenReady();
             mExoPlayer.stop();
             mExoPlayer.release();
             mExoPlayer = null;
@@ -165,12 +174,21 @@ public class StepFullDescriptionFragment extends Fragment {
         stepShortDescription.setText(mStep.getShortDescription());
         stepDescription.setText(mStep.getDescription());
 
+        if (mStep.getThumbnailURL().isEmpty()) {
+            mThumbNail.setVisibility(View.GONE);
+        } else {
+            mThumbNail.setVisibility(View.VISIBLE);
+            Picasso.with(getContext())
+                    .load(mStep.getThumbnailURL())
+                    .error(R.drawable.cooking)
+                    .placeholder(R.drawable.cooking)
+                    .into(mThumbNail);
+        }
+
         String urlPlayer = "";
 
         if (mStep != null) {
-            if (!mStep.getThumbnailURL().isEmpty()) {
-                urlPlayer = mStep.getThumbnailURL();
-            } else if (!mStep.getVideoURL().isEmpty()) {
+            if (!mStep.getVideoURL().isEmpty()) {
                 urlPlayer = mStep.getVideoURL();
             }
 
@@ -183,6 +201,16 @@ public class StepFullDescriptionFragment extends Fragment {
         }
     }
 
+    @Override
+    public void onPause() {
+        super.onPause();
+        releasePlayer();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+    }
 
     @Override
     public void onDestroyView() {

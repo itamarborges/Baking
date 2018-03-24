@@ -17,9 +17,17 @@
         android:orientation="vertical"
         android:layout_height="wrap_content">
 
+        <ImageView
+            android:layout_width="72dp"
+            android:layout_height="72dp"
+            android:paddingTop="8dp"
+            android:adjustViewBounds="true"
+            android:layout_gravity="center"
+            android:id="@+id/img_recipe"/>
+
         <TextView
             android:id="@+id/recipe_name"
-            android:paddingTop="16dp"
+            android:paddingTop="8dp"
             android:textStyle="bold"
             android:layout_width="match_parent"
             android:gravity="center"
